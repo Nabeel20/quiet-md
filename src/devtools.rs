@@ -25,6 +25,9 @@ fn fps() -> f64 {
     std::env::var("FDL_RECORD_FPS").ok().and_then(|v| v.parse().ok()).filter(|&f: &f64| f > 0.).unwrap_or(30.)
 }
 
+/// A script drives this run: other apps, dialogs and the updater stay out of it.
+pub fn scripted() -> bool { std::env::var_os("FDL_SCRIPT").is_some() }
+
 /// Time spent in the editor's `render` during the last benched frame.
 pub static RENDER_NS: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
 

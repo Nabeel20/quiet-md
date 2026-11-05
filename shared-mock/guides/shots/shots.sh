@@ -3,7 +3,7 @@
 # system's corners and shadow and 48pt of wallpaper around it. The window
 # floats in the middle of the main screen for about a minute (it never takes
 # focus); a borderless wallpaper window behind it hides whatever else is open.
-# usage: shared-mock/guides/shots/shots.sh   (after cargo build --release)
+# usage: shared-mock/guides/shots/shots.sh   (after cargo build --release --features devtools)
 set -e
 cd "$(dirname "$0")/../../.."
 work=$(mktemp -d /tmp/quiet-shots.XXXXXX)

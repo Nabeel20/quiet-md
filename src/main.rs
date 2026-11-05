@@ -8,7 +8,16 @@ mod assets;
 mod changelog;
 mod guides;
 mod clipboard;
+#[cfg(feature = "devtools")]
 mod devtools;
+/// Without the `devtools` feature (release builds) nothing reads FDL_SCRIPT.
+#[cfg(not(feature = "devtools"))]
+mod devtools {
+    pub static RENDER_NS: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    pub fn scripted() -> bool { false }
+    pub fn start(_: &mut gpui::Window, _: &mut gpui::App) {}
+    pub fn take_pick() -> Option<Vec<std::path::PathBuf>> { None }
+}
 mod docinfo;
 mod docmenu;
 mod editor;
@@ -91,7 +100,7 @@ fn open_main_window(scripted: bool, cx: &mut App) {
 
 fn main() {
     logging::init();
-    let scripted = std::env::var_os("FDL_SCRIPT").is_some();
+    let scripted = devtools::scripted();
     // No single-instance guard: copies may share a library (builds tested
     // side by side). `Store` rereads an index another copy rewrote before
     // writing its own, and `guides` seeds a new library only once.

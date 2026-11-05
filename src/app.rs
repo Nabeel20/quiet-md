@@ -285,7 +285,7 @@ pub struct Workspace {
 
 /// A macOS notification (only logged when scripted).
 fn notify_system(title: &str, body: &str) {
-    if std::env::var_os("FDL_SCRIPT").is_some() {
+    if crate::devtools::scripted() {
         return eprintln!("notification: {title} / {body}");
     }
     let q = |s: &str| s.replace('\\', "\\\\").replace('"', "\\\"");

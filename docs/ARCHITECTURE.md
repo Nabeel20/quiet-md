@@ -101,7 +101,7 @@ Core 的不变量由 `crates/core/src/editor/fuzz_tests.rs` 在每一步随机�
 
 | 模块 | 内容 |
 |---|---|
-| `main.rs` | 入口；`FDL_SCRIPT` 脚本模式；重新导出 `fdl_core` 的模块 |
+| `main.rs` | 入口；`FDL_SCRIPT` 脚本模式（仅 `devtools` 特性）；重新导出 `fdl_core` 的模块 |
 | `guides.rs` | 文档库是空的时放入内置的「开始指南」（只放一次） |
 | `app.rs` | `Workspace`：两栏窗口、打开 / 新建 / 保存 / 删除、保存状态、提醒调度 |
 | `html.rs` / `printing.rs` / `transfer.rs` | 导出 HTML / PDF、打印、导入导出的界面 |
@@ -114,7 +114,7 @@ Core 的不变量由 `crates/core/src/editor/fuzz_tests.rs` 在每一步随机�
 | `ui.rs` / `input.rs` | 共用小部件（菜单外壳、菜单行、白色药丸按钮、提示、Toast）、单行输入框 |
 | `highlight.rs` | 代码高亮 |
 | `assets.rs` | 编进二进制的图标、字体、封面图库 |
-| `devtools.rs` | 脚本驱动（见 tools/harness/README.md） |
+| `devtools.rs` | 脚本驱动，只在 `--features devtools` 构建里编入（见 tools/harness/README.md） |
 
 编辑器（`src/editor/`）：
 

@@ -148,7 +148,7 @@ pub(crate) fn refresh_all(this: &mut Workspace, cx: &mut Context<Workspace>) {
 /// A theme file in the user's editor; scripted runs only log it (they must
 /// not start other apps).
 fn open_in_editor(p: &std::path::Path, cx: &mut App) {
-    if std::env::var_os("FDL_SCRIPT").is_some() { eprintln!("devtools: open {}", p.display()); return }
+    if crate::devtools::scripted() { eprintln!("devtools: open {}", p.display()); return }
     cx.open_url(&format!("file://{}", p.display()));
 }
 
