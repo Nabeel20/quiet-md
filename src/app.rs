@@ -17,6 +17,11 @@ use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 use std::time::{Duration, Instant};
 
+/// Autosave waits for this pause in editing, but never longer than
+/// SAVE_MAX_DELAY after the oldest change not yet on disk.
+const SAVE_DELAY: Duration = Duration::from_millis(500);
+const SAVE_MAX_DELAY: Duration = Duration::from_secs(2);
+
 actions!(workspace, [NewDoc, ImportDoc, ToggleSidebar, FocusSearch, FindInDoc, ReplaceInDoc, OpenSettings, OpenAbout, CheckForUpdates, GoHome, CloseWindow, Quit,
     HideApp, HideOthers, ShowAll, Minimize, Zoom, ToggleFullScreen]);
 
@@ -273,6 +278,9 @@ pub struct Workspace {
     pub shortcuts: bool,
     pub(crate) focus: FocusHandle,
     save_task: Option<Task<()>>,
+    /// When the oldest edit not yet on disk was made: a save waits for a
+    /// pause in typing, but never longer than `SAVE_MAX_DELAY` after it.
+    dirty_since: Option<Instant>,
     /// The open document has changes not yet on disk (cleared only by a
     /// successful save or by 放弃修改).
     unsaved: bool,
@@ -427,6 +435,7 @@ impl Workspace {
             export_md: None,
             focus: cx.focus_handle(),
             save_task: None,
+            dirty_since: None,
             unsaved: false,
             after_save: None,
             editor_sub: None,
@@ -835,7 +844,15 @@ impl Workspace {
 
     fn schedule_save(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.status = SaveStatus::Saving;
+        if !self.unsaved || self.dirty_since.is_none() {
+            self.dirty_since = Some(Instant::now());
+        }
         self.unsaved = true;
+        // Each edit replaces the timer (dropping a Task cancels it), so steady
+        // typing would put the save off for as long as it lasts: the deadline
+        // caps that at SAVE_MAX_DELAY after the oldest unsaved edit.
+        let left = SAVE_MAX_DELAY.saturating_sub(self.dirty_since.map_or(Duration::ZERO, |t| t.elapsed()));
+        let delay = SAVE_DELAY.min(left);
         // Keep the list title live while typing; the body/snippet updates on save.
         if let (Some(id), Some(ed)) = (&self.current, &self.editor) {
             let title = ed.read(cx).core.doc.title.text.clone();
@@ -844,7 +861,7 @@ impl Workspace {
             }
         }
         self.save_task = Some(cx.spawn_in(window, async move |this, cx| {
-            cx.background_executor().timer(Duration::from_millis(500)).await;
+            cx.background_executor().timer(delay).await;
             let _ = this.update(cx, |w, cx| w.flush(cx));
         }));
         cx.notify();
@@ -899,6 +916,8 @@ impl Workspace {
             }
             Err(e) => self.status = SaveStatus::Failed(crate::localized_format!("保存失败：{}", "Could not save: {}", crate::settings::diagnostic(&e.to_string()))),
         }
+        // A failed save tries again SAVE_MAX_DELAY after this attempt, not on every keystroke.
+        self.dirty_since = self.unsaved.then(Instant::now);
         cx.notify();
         !self.unsaved
     }
