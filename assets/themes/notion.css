@@ -9,10 +9,6 @@
  */
 
 :root {
-  --theme-name: "Notion";
-  --theme-name-en: "Notion";
-  --theme-author: "quiet.md";
-  --theme-description: "Notion 的默认浅色页面：暖灰正文、紧凑的块、灰底红字的行内代码、深色引用竖线。";
   /* 块的画法：craft 或 feishu */
   --theme-base: craft;
 
@@ -166,7 +162,7 @@ p {
 h1 {
   font-family: system-ui;
   font-size: 30px;
-  line-height: 39px;
+  line-height: 36px;
   font-weight: 600;
   color: inherit;
   margin-top: 32px;
@@ -176,7 +172,7 @@ h1 {
 h2 {
   font-family: system-ui;
   font-size: 24px;
-  line-height: 31px;
+  line-height: 30px;
   font-weight: 600;
   color: inherit;
   margin-top: 22px;
@@ -185,42 +181,42 @@ h2 {
 
 h3 {
   font-family: system-ui;
-  font-size: 20px;
-  line-height: 26px;
+  font-size: 19px;
+  line-height: 24px;
   font-weight: 600;
   color: inherit;
-  margin-top: 16px;
+  margin-top: 19px;
   margin-bottom: 4px;
 }
 
 h4 {
   font-family: system-ui;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 15px;
+  line-height: 20px;
   font-weight: 600;
   color: inherit;
-  margin-top: 12px;
+  margin-top: 15px;
   margin-bottom: 4px;
 }
 
 h5 {
   font-family: system-ui;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 13px;
+  line-height: 17px;
   font-weight: 600;
   color: inherit;
-  margin-top: 8px;
-  margin-bottom: 4px;
+  margin-top: 10px;
+  margin-bottom: 2px;
 }
 
 h6 {
   font-family: system-ui;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 11px;
+  line-height: 15px;
   font-weight: 600;
   color: inherit;
   margin-top: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 h7 {
